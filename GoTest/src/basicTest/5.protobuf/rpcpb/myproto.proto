@@ -1,0 +1,41 @@
+//
+// 编译命令：protoc *.proto --go_out=plugins=grpc:./
+
+// 默认是proto2
+syntax = "proto3";
+
+//指定生成的go文件的存放路径(包名)
+option go_package = "../rpcpb/";
+
+//定义枚举类型
+enum Week{
+  Monday = 0; // 枚举值必须从0开始
+  Tuesday = 1;
+
+}
+// 定义消息体
+message Student{
+  // 为每个字段分配唯一的数字标识号，用于在消息的二进制格式中识别各个字段,相当于index。标识号范围[1,19000]||[19999,2e29-1]
+  int32 age = 1;// 可以不从1开始，但是不能重复
+  string name = 2;
+  People p = 3;// 嵌套消息体
+  repeated int32 score = 4;// 数组
+  // 枚举
+  Week w = 5;
+  // 联合体 , oneof字段就像可选字段， 除了它们会共享内存， 至多一个字段会被设置。 设置其中一个字段会清除其它字段
+  oneof data{
+    string teacher = 6;
+    string class = 7;
+  }
+}
+
+// 消息体可以嵌套
+message People{
+  uint32 weight = 1;// 不同msg内index可以相同
+}
+
+
+//添加一个rpc服务，protoc默认不支持编译rpc服务。只编译grpc，因为protobuf是google的，grpc也是google的（为了打造自己的生态）
+service bj38{
+  rpc say(People) returns(Student);
+}
