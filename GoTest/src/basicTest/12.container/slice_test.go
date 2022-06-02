@@ -58,3 +58,32 @@ func TestAppend(t *testing.T) {
 
 	runtime.NumCPU()
 }
+
+func TestFunc(t *testing.T) {
+	a := []int{1, 2, 3}
+	fmt.Println(a) // [1 2 3]
+	changeSlice(a)
+	fmt.Println(a) //[1 4 3]
+
+	changeSlicePtr(&a)
+	fmt.Println(a) //[1 4 3 5]
+}
+func changeSlice(s []int) {
+	s[1] = 4         // s和入参共用一个底层数组，并且该操作在容量范围内，所以直接在原底层数组上操作，影响原来的底层数组
+	s = append(s, 5) // 超出底层数组的容量，所以重新开辟一块内存，离开原来的底层数组，不影响原来的底层数组
+}
+func changeSlicePtr(s *[]int) {
+	*s = append(*s, 5) // 超出底层数组的容量，所以重新开辟一块内存，但是本身就是入参的结构体
+}
+
+func TestApp(t *testing.T) {
+	fmt.Println(returnAppend())
+}
+func returnAppend() (s []uint64) {
+	return append(s, 1)
+}
+
+func TestMake(t *testing.T) {
+	s := make([]int, 10)
+	fmt.Println(len(s), cap(s), s[8]) // 10 10
+}
